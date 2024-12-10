@@ -67,7 +67,8 @@ export class PageNavComponent implements OnInit, AfterViewInit, OnDestroy {
 		if (!this._routeData()?.['api']) {
 			return [];
 		}
-		const apiPageLinks = this._uiDocsService?.primitiveDocPageLinks();
+
+		const apiPageLinks = this._uiDocsService?.getPrimitiveDocHeaders(this._routeData()?.['api']);
 
 		if (!apiPageLinks) {
 			return [];
