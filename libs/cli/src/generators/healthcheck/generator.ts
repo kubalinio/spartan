@@ -4,6 +4,7 @@ import { brainImportsHealthcheck } from './healthchecks/brain-imports';
 import { brainRadioHealthcheck } from './healthchecks/brn-radio';
 import { coreImportsHealthcheck } from './healthchecks/core-imports';
 import { helmIconHealthcheck } from './healthchecks/hlm-icon';
+import { updateHelmLibrariesHealthcheck } from './healthchecks/hlm-libraries';
 import { scrollAreaHealthcheck } from './healthchecks/hlm-scroll-area';
 import { selectHealthcheck } from './healthchecks/hlm-select';
 import { versionHealthcheck } from './healthchecks/version';
@@ -12,7 +13,7 @@ import { promptUser } from './utils/prompt';
 import { printReport } from './utils/reporter';
 import { runHealthcheck } from './utils/runner';
 
-export async function healthcheckGenerator(tree: Tree, options: HealthcheckGeneratorSchema) {
+export async function healthcheckGenerator(tree: Tree, options: HealthcheckGeneratorSchema & { angularCli?: boolean }) {
 	logger.info('Running healthchecks...');
 
 	const healthchecks: Healthcheck[] = [
@@ -23,6 +24,7 @@ export async function healthcheckGenerator(tree: Tree, options: HealthcheckGener
 		scrollAreaHealthcheck,
 		brainRadioHealthcheck,
 		selectHealthcheck,
+		updateHelmLibrariesHealthcheck,
 	];
 
 	// store all the failed healthchecks that can be fixed
@@ -43,7 +45,7 @@ export async function healthcheckGenerator(tree: Tree, options: HealthcheckGener
 			const fix = options.autoFix || (await promptUser(report.healthcheck.prompt));
 
 			if (fix) {
-				await report.healthcheck.fix(tree);
+				await report.healthcheck.fix(tree, { angularCli: options.angularCli });
 			}
 		}
 	}
